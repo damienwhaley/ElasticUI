@@ -121,7 +121,7 @@ module elasticui.controllers {
                 var promiseToAbort = this.searchPromise;
                 this.searchPromise = null;
                 promiseToAbort.abort();
-            }  
+            }
 
             this.indexVM.loading = true;
             this.searchPromise = this.getSearchPromise();
@@ -156,9 +156,14 @@ module elasticui.controllers {
         }
 
         private onResult(body, updateOnlyIfCountChanged: boolean = false) {
-            if (!updateOnlyIfCountChanged || this.indexVM.results == null || this.indexVM.results.hits.total != body.hits.total) {
+            var totalHits = 0;
+            if (this.indexVM.results && this.indexVM.results.hits && this.indexVM.results.hits.total > 0) {
+                totalHits = this.indexVM.results.hits.total;
+            }
+
+            if (!updateOnlyIfCountChanged || this.indexVM.results == null || totalHits != body.hits.total) {
                 this.indexVM.results = body;
-                this.indexVM.pageCount = Math.ceil(this.indexVM.results.hits.total / this.indexVM.pageSize);
+                this.indexVM.pageCount = Math.ceil(totalHits / this.indexVM.pageSize);
             }
             this.indexVM.loading = false;
         }

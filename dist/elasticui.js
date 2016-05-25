@@ -453,7 +453,13 @@ var elasticui;
         filters.filters.filter('euiTimestamp', TimestampFilter);
     })(filters = elasticui.filters || (elasticui.filters = {}));
 })(elasticui || (elasticui = {}));
-angular.module('elasticui.controllers', []).controller(elasticui.controllers);
+var elasticui;
+(function (elasticui) {
+    var controllers;
+    (function (_controllers) {
+        _controllers.controllers = angular.module('elasticui.controllers', []);
+    })(controllers = elasticui.controllers || (elasticui.controllers = {}));
+})(elasticui || (elasticui = {}));
 var elasticui;
 (function (elasticui) {
     var controllers;
@@ -741,9 +747,13 @@ var elasticui;
             };
             IndexController.prototype.onResult = function (body, updateOnlyIfCountChanged) {
                 if (updateOnlyIfCountChanged === void 0) { updateOnlyIfCountChanged = false; }
-                if (!updateOnlyIfCountChanged || this.indexVM.results == null || this.indexVM.results.hits.total != body.hits.total) {
+                var totalHits = 0;
+                if (this.indexVM.results && this.indexVM.results.hits && this.indexVM.results.hits.total > 0) {
+                    totalHits = this.indexVM.results.hits.total;
+                }
+                if (!updateOnlyIfCountChanged || this.indexVM.results == null || totalHits != body.hits.total) {
                     this.indexVM.results = body;
-                    this.indexVM.pageCount = Math.ceil(this.indexVM.results.hits.total / this.indexVM.pageSize);
+                    this.indexVM.pageCount = Math.ceil(totalHits / this.indexVM.pageSize);
                 }
                 this.indexVM.loading = false;
             };
